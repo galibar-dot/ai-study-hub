@@ -36,21 +36,15 @@ cp config.yml.example config.yml
 # APP_PASSWORD=your_secure_password
 ```
 
-#### 3. 下载词典数据库（可选）
-
-如需使用英语学习功能，下载 ECDICT 词典：
-
-1. 访问 [ECDICT Releases](https://github.com/skywind3000/ECDICT/releases)
-2. 下载 `ecdict-sqlite-28.zip` (约 50MB)
-3. 解压后重命名为 `ecdict.db`
-4. 放到项目根目录
+#### 3. 词典数据库
+# 已经加入了词典数据库，学习模式下双击即可翻译单词
 
 #### 4. 启动服务
 
 **Windows:**
 ```bash
 # 使用管理器（推荐）
-manager.bat
+admin_pannel.bat
 
 # 或直接启动
 start.bat
@@ -74,25 +68,25 @@ python server.py
 2. 手机访问: `http://你的IP:8000`
 
 #### 外网访问（Cloudflare Tunnel）
-1. 下载 [cloudflared](https://github.com/cloudflare/cloudflared/releases)
-2. 运行: `cloudflared tunnel --url http://localhost:8000`
-3. 使用生成的 URL 访问
+
+1. 运行: `cloudflared tunnel --url http://localhost:8000`
+2. 使用生成的 URL 访问
 
 ### 📂 项目结构
 
 ```
-claude-chat-system/
-├── server.py              # 主服务器
-├── storage.py             # 聊天记录存储
-├── dictionary.py          # 词典功能
-├── vocabulary.py          # 生词本
-├── reading.py             # 阅读专项
-├── static/                # 前端文件
-├── docs/                  # 文档
-├── scripts/               # 工具脚本
-├── requirements.txt       # Python 依赖
-├── .env.example          # 环境变量示例
-└── config.yml.example    # 配置文件示例
+ai-study-hub/
+├── server.py              # Main server
+├── storage.py             # Chat history storage
+├── dictionary.py          # Dictionary features
+├── vocabulary.py          # Vocabulary notebook
+├── reading.py             # Reading practice
+├── static/                # Frontend files
+├── docs/                  # Documentation
+├── scripts/               # Utility scripts
+├── requirements.txt       # Python dependencies
+├── .env.example          # Environment variables example
+└── config.yml.example    # Configuration file example
 ```
 
 ### ⚙️ 配置说明
@@ -185,19 +179,17 @@ cp config.yml.example config.yml
 # APP_PASSWORD=your_secure_password
 ```
 
-#### 3. Download Dictionary (Optional)
-
-For English learning features, download ECDICT:
-
-1. Visit [ECDICT Releases](https://github.com/skywind3000/ECDICT/releases)
-2. Download `ecdict-sqlite-28.zip` (~50MB)
-3. Extract and rename to `ecdict.db`
-4. Place in project root
+#### 3. Dictionary Database
+# Dictionary database is already included. In learning mode, double-click to translate words.
 
 #### 4. Start Server
 
 **Windows:**
 ```bash
+# Using manager (recommended)
+admin_pannel.bat
+
+# Or start directly
 start.bat
 ```
 
