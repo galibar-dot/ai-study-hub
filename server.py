@@ -841,7 +841,7 @@ async def get_available_models(request: Request) -> JSONResponse:
 
     models = []
 
-    # Claude 模型（通过 Claude Code 客户端）
+    # Claude models (via Claude Agent SDK)
     claude_models = [
         {"id": "claude-opus-4-7", "name": "Opus 4.7", "short": "Opus 4.7", "desc": "最强大的 Claude 模型", "category": "claude"},
         {"id": "claude-sonnet-4-6", "name": "Sonnet 4.6", "short": "Sonnet 4.6", "desc": "平衡性能与速度", "category": "claude"},

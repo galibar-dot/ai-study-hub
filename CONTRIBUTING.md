@@ -68,8 +68,8 @@ docs: 更新安装说明
 
 1. **克隆仓库**
    ```bash
-   git clone https://github.com/your-username/claude-code1.git
-   cd claude-code1
+   git clone https://github.com/your-username/ai-study-hub.git
+   cd ai-study-hub
    ```
 
 2. **安装依赖**

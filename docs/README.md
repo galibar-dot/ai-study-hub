@@ -1,16 +1,16 @@
-# 手机 ↔ 电脑 ↔ Claude
+# 手机 ↔ 电脑 ↔ AI Chat
 
-让手机通过电脑这个中转，跟你电脑上已登录的 Claude Code 聊天。
+让手机通过电脑这个中转，使用 AI 聊天功能。
 
 ## 工作原理
 
 ```
-手机浏览器  ──HTTP──>  电脑上的 FastAPI 服务  ──Agent SDK──>  Claude Code  ──>  Claude
+手机浏览器  ──HTTP──>  电脑上的 FastAPI 服务  ──Agent SDK──>  AI Models  ──>  Claude/GPT
 ```
 
-- 电脑要开机、服务要在跑、Claude Code 要已登录
+- 电脑要开机、服务要在跑
 - 手机不用装任何 App，浏览器就行
-- API Key 不用配，复用 Claude Code 的登录态
+- API Key 不用配，复用已配置的登录态
 
 ## 首次准备
 
@@ -20,11 +20,11 @@
 pip install -r requirements.txt
 ```
 
-并确认 Claude Code CLI 已装好且已登录：
+并确认 Claude Agent SDK 已配置：
 
 ```powershell
-claude --version
-claude  # 跑一次确认是登录状态
+# 检查 Python 环境
+python --version
 ```
 
 ## 配置（必做一次）
@@ -87,7 +87,7 @@ python server.py
 ## 项目结构
 
 ```
-claude code1/
+ai-study-hub/
 ├── server.py           # FastAPI 后端
 ├── requirements.txt    # Python 依赖
 ├── start.bat           # Windows 一键启动
@@ -116,8 +116,8 @@ claude code1/
 
 | 现象 | 原因 / 解决 |
 |---|---|
-| 启动报 `claude` not found | Claude Code CLI 没装；先 `npm install -g @anthropic-ai/claude-code` |
-| 启动报 unauthorized | Claude Code 没登录；先在电脑上跑一次 `claude` 登录 |
+| 启动报依赖缺失 | 运行 `pip install -r requirements.txt` |
+| 启动报配置错误 | 检查 .env 和 config.yml 配置 |
 | 手机访问超时 | 防火墙；见上面 "方式 2" 第 3 步 |
 | 回复一直转圈 | 看电脑端命令行有没有报错；最常见是 API 限流或网络 |
 | 多轮上下文丢了 | 用了 "新对话" 按钮，或者电脑端服务重启过 |
