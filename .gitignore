@@ -1,0 +1,56 @@
+# 数据库文件
+*.db
+ecdict.db
+chats/*.db
+vocabulary.db
+reading.db
+
+# 聊天记录和用户数据
+chats/
+logs/
+*.log
+
+# 环境变量（包含敏感信息）
+.env
+config.yml
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+venv/
+env/
+ENV/
+
+# 工具程序
+cloudflared.exe
+
+# 临时文件
+cookies.txt
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# 操作系统
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 测试
+.pytest_cache/
+.coverage
+htmlcov/

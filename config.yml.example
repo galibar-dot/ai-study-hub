@@ -1,0 +1,13 @@
+# API 提供商配置示例
+# 复制此文件为 config.yml 并填入你的配置
+
+relay:
+  default_provider: default
+  providers:
+    default:
+      base_url: https://api.example.com/v1
+      api_key: your_api_key_here
+      models:
+        - gpt-4
+        - gpt-3.5-turbo
+      api_type: chat_completions  # 或 responses

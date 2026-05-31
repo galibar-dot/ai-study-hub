@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务器管理面板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .status-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .status-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.running {
+            background: #4ade80;
+            box-shadow: 0 0 10px #4ade80;
+        }
+
+        .status-dot.stopped {
+            background: #ef4444;
+            box-shadow: 0 0 10px #ef4444;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .status-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            font-size: 13px;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .info-label {
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: white;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+        }
+
+        .btn-stop {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-open {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .footer {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 服务器管理面板</h1>
+            <div class="subtitle">Claude Code 服务器控制中心</div>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <div class="status-card">
+            <div class="status-header">
+                <div class="status-title">服务器状态</div>
+                <div class="status-indicator">
+                    <div id="statusDot" class="status-dot stopped"></div>
+                    <span id="statusText">已停止</span>
+                </div>
+            </div>
+            <div id="statusInfo" class="status-info" style="display: none;">
+                <div class="info-item">
+                    <div class="info-label">进程 ID</div>
+                    <div class="info-value" id="pidValue">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">CPU 使用率</div>
+                    <div class="info-value" id="cpuValue">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">内存使用</div>
+                    <div class="info-value" id="memValue">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">运行时长</div>
+                    <div class="info-value" id="uptimeValue">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-grid">
+            <button id="btnStart" class="btn btn-start" onclick="startServer()">
+                <span>▶</span> 启动服务器
+            </button>
+            <button id="btnRestart" class="btn btn-restart" onclick="restartServer()">
+                <span>🔄</span> 重启服务器
+            </button>
+            <button id="btnStop" class="btn btn-stop" onclick="stopServer()">
+                <span>⏹</span> 停止服务器
+            </button>
+            <button id="btnOpen" class="btn btn-open" onclick="openWebsite()">
+                <span>🌐</span> 打开主网页
+            </button>
+        </div>
+
+        <div class="footer">
+            自动刷新状态中 · 每 3 秒更新一次
+        </div>
+    </div>
+
+    <script>
+        let statusInterval = null;
+
+        function showMessage(text, type = 'success') {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `message ${type} show`;
+            setTimeout(() => {
+                msg.classList.remove('show');
+            }, 3000);
+        }
+
+        function updateStatus(status) {
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            const statusInfo = document.getElementById('statusInfo');
+            const btnStart = document.getElementById('btnStart');
+            const btnRestart = document.getElementById('btnRestart');
+            const btnStop = document.getElementById('btnStop');
+            const btnOpen = document.getElementById('btnOpen');
+
+            if (status.running) {
+                statusDot.className = 'status-dot running';
+                statusText.textContent = '运行中';
+                statusInfo.style.display = 'grid';
+
+                document.getElementById('pidValue').textContent = status.pid || '-';
+                document.getElementById('cpuValue').textContent =
+                    status.cpu_percent ? `${status.cpu_percent.toFixed(1)}%` : '-';
+                document.getElementById('memValue').textContent =
+                    status.memory_mb ? `${status.memory_mb.toFixed(0)} MB` : '-';
+
+                if (status.create_time) {
+                    const uptime = Date.now() / 1000 - status.create_time;
+                    const hours = Math.floor(uptime / 3600);
+                    const minutes = Math.floor((uptime % 3600) / 60);
+                    document.getElementById('uptimeValue').textContent =
+                        `${hours}h ${minutes}m`;
+                } else {
+                    document.getElementById('uptimeValue').textContent = '-';
+                }
+
+                btnStart.disabled = true;
+                btnRestart.disabled = false;
+                btnStop.disabled = false;
+                btnOpen.disabled = false;
+            } else {
+                statusDot.className = 'status-dot stopped';
+                statusText.textContent = '已停止';
+                statusInfo.style.display = 'none';
+
+                btnStart.disabled = false;
+                btnRestart.disabled = true;
+                btnStop.disabled = true;
+                btnOpen.disabled = true;
+            }
+        }
+
+        async function fetchStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                updateStatus(data);
+            } catch (error) {
+                console.error('获取状态失败:', error);
+            }
+        }
+
+        async function startServer() {
+            const btn = document.getElementById('btnStart');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<span class="loading"></span> 启动中...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/start', { method: 'POST' });
+                const data = await response.json();
+
+                if (data.ok) {
+                    showMessage('服务器启动成功！', 'success');
+                    setTimeout(fetchStatus, 1000);
+                } else {
+                    showMessage(data.error || '启动失败', 'error');
+                }
+            } catch (error) {
+                showMessage('请求失败: ' + error.message, 'error');
+            } finally {
+                btn.innerHTML = originalHTML;
+                setTimeout(fetchStatus, 500);
+            }
+        }
+
+        async function stopServer() {
+            if (!confirm('确定要停止服务器吗？')) return;
+
+            const btn = document.getElementById('btnStop');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<span class="loading"></span> 停止中...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/stop', { method: 'POST' });
+                const data = await response.json();
+
+                if (data.ok) {
+                    showMessage('服务器已停止', 'success');
+                } else {
+                    showMessage(data.error || '停止失败', 'error');
+                }
+            } catch (error) {
+                showMessage('请求失败: ' + error.message, 'error');
+            } finally {
+                btn.innerHTML = originalHTML;
+                setTimeout(fetchStatus, 500);
+            }
+        }
+
+        async function restartServer() {
+            if (!confirm('确定要重启服务器吗？')) return;
+
+            const btn = document.getElementById('btnRestart');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<span class="loading"></span> 重启中...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/restart', { method: 'POST' });
+                const data = await response.json();
+
+                if (data.ok) {
+                    showMessage('服务器重启成功！', 'success');
+                    setTimeout(fetchStatus, 2000);
+                } else {
+                    showMessage(data.error || '重启失败', 'error');
+                }
+            } catch (error) {
+                showMessage('请求失败: ' + error.message, 'error');
+            } finally {
+                btn.innerHTML = originalHTML;
+                setTimeout(fetchStatus, 500);
+            }
+        }
+
+        function openWebsite() {
+            window.open('http://localhost:8000', '_blank');
+        }
+
+        // 初始化
+        fetchStatus();
+        statusInterval = setInterval(fetchStatus, 3000);
+    </script>
+</body>
+</html>
